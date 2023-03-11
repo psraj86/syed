@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { PostService } from './post.service';
@@ -6,44 +7,32 @@ import { PostService } from './post.service';
   providedIn: 'root',
 })
 export class CommentService {
-  comments = [
-    {
-      id: 1,
-      name: 'monika',
-      email: 'monika@gmail.com',
-      body: 'this ia very nice post',
-    },
-    {
-      id: 2,
-      name: 'monika',
-      email: 'monika@gmail.com',
-      body: 'comment 2 this ia very nice post  ',
-    },
-  ];
-  comments$: BehaviorSubject<any> = new BehaviorSubject<any>(this.comments);
-  constructor(private postService: PostService) {}
+  url =
+    'http://blogapp-env.eba-dmaptfmp.us-east-1.elasticbeanstalk.com/api/v1/posts/';
+  constructor(private postService: PostService, private http: HttpClient) {}
 
-  getCommentByPostId(postId: any) {}
+  getCommentByPostId(postId: any) {
+    const url = `${this.url}${postId}/comments`;
 
-  add(comment: any) {
-    let id = 1;
-    if (this.comments.length) {
-      id = Math.max(...this.comments.map((c) => c.id)) + 1;
-    }
+    return this.http.get(url);
+  }
+
+  add(comment: any, postId: number) {
     const { name, email } = this.generateRandomName();
-    this.comments.push({ id, name, email, body: comment });
-    this.comments$.next(this.comments);
+    const newComment = { name, email, body: comment };
+    const url = `${this.url}${postId}/comments`;
+    return this.http.post(url, newComment);
   }
 
   edit(comment: any) {
-    const index = this.comments.findIndex((c) => c.id === comment.id);
-    this.comments[index] = { ...this.comments[index], ...comment };
-    this.comments$.next(this.comments);
+    // const index = this.comments.findIndex((c) => c.id === comment.id);
+    // this.comments[index] = { ...this.comments[index], ...comment };
+    // this.comments$.next(this.comments);
   }
 
-  delete(id: number) {
-    this.comments = this.comments.filter((comment) => comment.id !== id);
-    this.comments$.next(this.comments);
+  delete(id: number, postId: number) {
+    const url = `${this.url}${postId}/comments/${id}`;
+    return this.http.delete(url);
   }
 
   generateRandomName() {

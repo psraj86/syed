@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { CommentService } from 'src/app/services/comment.service';
 
 @Component({
@@ -10,12 +11,29 @@ export class CommentComponent {
   comment: any;
   btnText = 'Save';
   updatedComment: any = {};
+  @Input() post$!: Observable<any>;
+  post: any;
+  comments$!: Observable<any>;
   constructor(private commentService: CommentService) {}
-  @Input() comments = [];
+
+  ngAfterViewInit(): void {
+    this.post$.subscribe((post) => {
+      this.post = post;
+      this.getComments();
+    });
+  }
+
+  getComments() {
+    if (this.post) {
+      this.comments$ = this.commentService.getCommentByPostId(this.post.id);
+    }
+  }
 
   add() {
-    this.commentService.add(this.comment);
-    this.setText();
+    this.commentService.add(this.comment, this.post.id).subscribe((res) => {
+      this.setText();
+      this.getComments();
+    });
   }
 
   setComment(comment: any) {
@@ -31,8 +49,15 @@ export class CommentComponent {
   }
 
   delete(comment: any) {
-    this.commentService.delete(comment.id);
-    this.setText();
+    this.commentService.delete(comment.id, this.post.id).subscribe(
+      (res) => {
+        this.setText();
+        this.getComments();
+      },
+      (err) => {
+        this.getComments()
+      }
+    );
   }
 
   setText() {

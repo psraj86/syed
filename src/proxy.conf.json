@@ -1,0 +1,6 @@
+// {
+//   "/api": {
+//     "target": "http://blogapp-env.eba-dmaptfmp.us-east-1.elasticbeanstalk.com",
+//     "secure": false
+//   }
+// }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { PostService } from '../services/post.service';
 import { CreatePostModelComponent } from './create-post-model/create-post-model.component';
 
@@ -10,26 +11,26 @@ import { CreatePostModelComponent } from './create-post-model/create-post-model.
   styleUrls: ['./posts.component.scss'],
 })
 export class PostsComponent implements OnInit {
-  posts: any;
+  post$?: Observable<any>;
   categories = [
     { id: 1, name: 'Category 1' },
-    { id: 2, name: 'Category 2' },
+    { id: 2, name: 'C ategory 2' },
     { id: 3, name: 'Category 3' },
     { id: 4, name: 'Category 4' },
   ];
+  posts$!: Observable<any>;
   constructor(
     private postService: PostService,
     private router: Router,
     private dialog: MatDialog
   ) {}
   ngOnInit(): void {
-    this.postService.posts$.subscribe((res) => {
-      this.posts = res.content;
-    });
+    this.getPosts();
+  }
 
-    // this.postService
-    //   .getData()
-    //   .subscribe((res) => console.log('Final Res -->', res));
+  getPosts() {
+    console.log('Calling...');
+    this.posts$ = this.postService.getPosts();
   }
 
   goToPost(post: any) {
@@ -52,20 +53,35 @@ export class PostsComponent implements OnInit {
       .subscribe((data) => {
         if (data) {
           if (edit) {
-            this.postService.updatePost(post.id, { ...post, ...data });
+            this.postService
+              .updatePost(post.id, { ...post, ...data })
+              .subscribe(() => {
+                this.getPosts();
+              });
           } else {
-            let id = 1;
-            if (this.posts.length) {
-              id = Math.max(...this.posts.map((item: any) => item.id)) + 1;
-            }
-
-            this.postService.addPost({ ...data, comments: [], id });
+            this.postService
+              .addPost({ ...data, comments: [] })
+              .subscribe(() => {
+                this.getPosts();
+              });
           }
         }
       });
   }
 
   deletePost(post: any) {
-    this.postService.deletePost(+post.id);
+    this.postService.deletePost(post.id).subscribe(
+      (res) => {
+        console.log('Calling...', res);
+        this.getPosts();
+      },
+      (err) => {
+        console.log(err);
+        this.getPosts();
+      },
+      () => {
+        this.getPosts();
+      }
+    );
   }
 }
