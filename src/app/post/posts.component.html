@@ -1,0 +1,35 @@
+<button
+  class="mb-2"
+  mat-raised-button
+  (click)="openPostDialog()"
+  color="primary"
+>
+  Create New Post
+</button>
+
+<mat-divider></mat-divider>
+<mat-accordion>
+  <mat-expansion-panel hideToggle *ngFor="let post of posts">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ post.title }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <p>Description : {{ post.description }}</p>
+    <p>Content : {{ post.content }}</p>
+    <div class="d-flex gap-2">
+      <button (click)="goToPost(post)" mat-raised-button color="primary">
+        More Details
+      </button>
+
+      <button mat-mini-fab color="accent" (click)="openPostDialog(post, true)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button (click)="deletePost(post)" mat-mini-fab color="warn">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -1,0 +1,68 @@
+<mat-card class="m-3">
+  <mat-card-header>
+    <mat-card-title class="-ml-5">{{ title }} Post</mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <div class="mt-3">
+      <form [formGroup]="postForm" class="d-flex flex-column">
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input formControlName="title" matInput placeholder="Title" />
+          <mat-error *ngIf="postForm?.get('title')?.invalid"
+            >Title is required</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option
+              *ngFor="let category of categories"
+              [value]="category.id"
+              >{{ category.name }}</mat-option
+            >
+          </mat-select>
+          <mat-error *ngIf="postForm?.get('categoryId')?.invalid"
+            >Category is required</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea
+            formControlName="description"
+            matInput
+            placeholder="Description"
+          ></textarea>
+          <mat-error *ngIf="postForm?.get('description')?.invalid"
+            >Description is required</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Content</mat-label>
+          <textarea
+            formControlName="content"
+            matInput
+            placeholder="Content"
+          ></textarea>
+          <mat-error *ngIf="postForm?.get('content')?.errors"
+            >Content is required</mat-error
+          >
+        </mat-form-field>
+      </form>
+    </div>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="warn" [mat-dialog-close]="false">
+      Close</button
+    >&nbsp;&nbsp;
+    <button
+      mat-raised-button
+      color="primary"
+      [mat-dialog-close]="postForm.value"
+      [disabled]="!postForm.valid"
+    >
+      {{ title }} Post
+    </button>
+  </mat-card-actions>
+</mat-card>
