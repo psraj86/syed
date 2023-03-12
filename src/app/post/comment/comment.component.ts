@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { CommentService } from 'src/app/services/comment.service';
 
@@ -39,13 +39,16 @@ export class CommentComponent {
   setComment(comment: any) {
     this.btnText = 'Edit';
     this.updatedComment = comment;
-    console.log(comment, this.updatedComment);
     this.comment = comment.body;
   }
 
   update() {
-    this.commentService.edit({ ...this.updatedComment, body: this.comment });
-    this.setText();
+    this.commentService
+      .edit({ ...this.updatedComment, body: this.comment }, this.post.id)
+      .subscribe((res) => {
+        this.setText();
+        this.getComments();
+      });
   }
 
   delete(comment: any) {
@@ -55,7 +58,7 @@ export class CommentComponent {
         this.getComments();
       },
       (err) => {
-        this.getComments()
+        this.getComments();
       }
     );
   }

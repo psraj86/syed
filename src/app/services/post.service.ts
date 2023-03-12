@@ -32,7 +32,4 @@ export class PostService {
   updatePost(id: number, updatedPost: any) {
     return this.http.put(this.url + '/' + +id, updatedPost);
   }
-  // getData() {
-  //   return this.http.get(this.url).subscribe((res) => console.log(res));
-  // }
 }

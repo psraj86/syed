@@ -24,10 +24,9 @@ export class CommentService {
     return this.http.post(url, newComment);
   }
 
-  edit(comment: any) {
-    // const index = this.comments.findIndex((c) => c.id === comment.id);
-    // this.comments[index] = { ...this.comments[index], ...comment };
-    // this.comments$.next(this.comments);
+  edit(comment: any, postId: number) {
+    const url = `${this.url}${postId}/comments/${comment.id}`;
+    return this.http.put(url, comment);
   }
 
   delete(id: number, postId: number) {
